@@ -1,0 +1,20 @@
+name: RPGUtils
+version: '1.0-SNAPSHOT'
+main: me.borysplugin.rPGUtils.RPGUtils
+api-version: '1.20'
+commands:
+  items:
+    description: Manage custom items
+    usage: /items <give|reload> [arguments]
+    permission-message: You do not have permission to use this command.
+    default: op
+  utils:
+    description: Utilities commands
+    usage: /utils + command [arguments]
+    permission-message: You do not have permission to use this command.
+    default: op
+  gui:
+    description: GUI commands
+    usage: /gui + command [arguments]
+    permission-message: You do not have permission to use this command.
+    default: op
