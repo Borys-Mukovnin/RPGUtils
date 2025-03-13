@@ -1,0 +1,13 @@
+general_property_1: "value1"
+general_property_2: 100
+
+modules:
+  module1:
+    property_1: "some_value"
+    property_2: 42
+    property_3: true
+
+  module2:
+    property_1: "another_value"
+    property_2: 99
+    property_3: false

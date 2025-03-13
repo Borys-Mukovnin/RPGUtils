@@ -1,5 +1,7 @@
-package me.borysplugin.rPGUtils
+package me.borysplugin.rPGUtils.managers
 
+import me.borysplugin.rPGUtils.RPGUtils
+import me.borysplugin.rPGUtils.models.PlayerStats
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent

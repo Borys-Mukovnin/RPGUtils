@@ -1,18 +1,19 @@
-import me.borysplugin.rPGUtils.PlayerStats
+package me.borysplugin.rPGUtils.storage
+
+import me.borysplugin.rPGUtils.models.PlayerStats
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.SQLException
 import java.sql.Statement
 import java.util.*
 
-class MySQLManager(
+class DatabaseManager(
     private val host: String,
     private val port: String,
     private val database: String,
     private val username: String,
     private val password: String
 ) {
-
     private var connection: Connection? = null
 
     // Establish a connection to MySQL

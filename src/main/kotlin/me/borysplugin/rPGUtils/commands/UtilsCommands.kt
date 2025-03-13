@@ -1,4 +1,4 @@
-package me.borysplugin.rPGUtils
+package me.borysplugin.rPGUtils.commands
 
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor

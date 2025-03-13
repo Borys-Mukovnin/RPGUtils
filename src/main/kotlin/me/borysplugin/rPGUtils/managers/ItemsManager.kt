@@ -1,4 +1,8 @@
-package me.borysplugin.rPGUtils
+package me.borysplugin.rPGUtils.managers
+
+
+import me.borysplugin.rPGUtils.RPGUtils
+import me.borysplugin.rPGUtils.models.ItemStats
 import org.bukkit.Material
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.Player
@@ -52,6 +56,7 @@ class ItemsManager(private val plugin: RPGUtils) {
     fun GetItem(categoryName: String, itemName: String): ItemStats? {
         return itemsMap[categoryName]?.get(itemName)
     }
+
 
     fun CreateItem(category: String, itemName: String): ItemStack? {
         val itemStats = GetItem(category, itemName) ?: return null

@@ -1,5 +1,9 @@
-package me.borysplugin.rPGUtils
+package me.borysplugin.rPGUtils.events
 
+import me.borysplugin.rPGUtils.PluginUtils
+import me.borysplugin.rPGUtils.RPGUtils
+import me.borysplugin.rPGUtils.managers.CombatManager
+import me.borysplugin.rPGUtils.managers.PlayerManager
 import org.bukkit.Bukkit
 import kotlin.random.Random
 import org.bukkit.entity.Player
@@ -20,7 +24,7 @@ class EventListeners(
     private val combatManager: CombatManager
 ) : Listener {
 
-    private val updateTasks: MutableMap<UUID, BukkitTask> = mutableMapOf()
+    //private val updateTasks: MutableMap<UUID, BukkitTask> = mutableMapOf()
 
     @EventHandler
     fun onPlayerJoin(event: PlayerJoinEvent) {
@@ -46,17 +50,16 @@ class EventListeners(
 
             val finalStatsDefender = playerManager.GetPlayerTotalStats(defender.uniqueId)
             val defenderDefense = finalStatsDefender!!.defense
-            val mitigationFactor = (defenderDefense / (finalDamage + defenderDefense)) * 0.8
-            val damageMultiplier = 1.0 - mitigationFactor
-            finalDamage *= damageMultiplier
+            val damageMultiplier = 1.0 - ((defenderDefense / (defenderDefense + finalDamage)) * 0.8)
+            finalDamage = damageMultiplier * finalDamage
             event.damage = finalDamage
             return
         }
 
         // Mark player as in combat (to trigger immediate updates)
-        if (true) {
-            combatManager.SetPlayerInCombat(attacker.uniqueId)
-        }
+
+        combatManager.SetPlayerInCombat(attacker.uniqueId)
+        
         if (defender is Player) {
             combatManager.SetPlayerInCombat(defender.uniqueId)
         }
@@ -72,11 +75,11 @@ class EventListeners(
 
         var finalDamage = 0.0
 
-        if (isCriticalHit(attacker)) {
+        if (PluginUtils.isCriticalHit(attacker)) {
 
-            if (Random.nextDouble(100.0) < attackerCritChance!!) {
+            if (attackerCritChance!! > Random.nextDouble(100.0)) {
 
-                finalDamage = attackerAttackPower!! * ((100 + attackerCritDamage!!) / 100)
+                finalDamage = attackerAttackPower!! * ((attackerCritDamage!! + 100) / 100)
                 attacker.sendMessage("§6Critical Hit!")
             } else {
                 finalDamage = attackerAttackPower!!
@@ -89,9 +92,8 @@ class EventListeners(
         if (defender is Player) {
             val finalStatsDefender = playerManager.GetPlayerTotalStats(defender.uniqueId)
             val defenderDefense = finalStatsDefender!!.defense
-            val mitigationFactor = (defenderDefense / (finalDamage + defenderDefense)) * 0.8
-            val damageMultiplier = 1.0 - mitigationFactor
-            finalDamage *= damageMultiplier
+            val damageMultiplier = 1.0 - ((defenderDefense / (defenderDefense + finalDamage)) * 0.8)
+            finalDamage = damageMultiplier * finalDamage
         }
 
         val location = event.entity.location
@@ -117,7 +119,7 @@ class EventListeners(
     fun onInventoryClick(event: InventoryClickEvent) {
         val player = event.whoClicked as? Player ?: return
         scheduleStatUpdate(event, player)
-        setMaxHealth(player)
+        PluginUtils.setMaxHealth(player, playerManager.GetPlayerTotalStats(player.uniqueId)!!.health, plugin)
     }
 
 
@@ -127,7 +129,6 @@ class EventListeners(
         Bukkit.getScheduler().runTask(plugin, Runnable {
             playerManager.UpdateOnlinePlayers(event)
         })
-
     }
     fun isCriticalHit(player: Player): Boolean {
 
@@ -137,6 +138,7 @@ class EventListeners(
                 && !player.location.block.isLiquid
                 && player.fallDistance > 0.0 // Ensures falling
     }
+
     fun setMaxHealth(player: Player) {
         Bukkit.getScheduler().runTask(plugin, Runnable {
             val totalStats = playerManager.GetPlayerTotalStats(player.uniqueId)
@@ -144,4 +146,5 @@ class EventListeners(
             player.health = player.maxHealth
         })
     }
+
 }

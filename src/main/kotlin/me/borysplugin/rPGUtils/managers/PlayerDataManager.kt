@@ -1,12 +1,13 @@
-package me.borysplugin.rPGUtils
+package me.borysplugin.rPGUtils.managers
 
-import MySQLManager
-import org.bukkit.entity.Player
+import me.borysplugin.rPGUtils.RPGUtils
+import me.borysplugin.rPGUtils.models.PlayerStats
+import me.borysplugin.rPGUtils.storage.DatabaseManager
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
 import java.util.UUID
 
-class PlayerDataManager(private val plugin: RPGUtils, private val mySQLManager: MySQLManager) {
+class PlayerDataManager(private val plugin: RPGUtils, private val mySQLManager: DatabaseManager) {
 
     private val onlinePlayersData: MutableMap<UUID, PlayerStats> = mutableMapOf()
 

@@ -1,5 +1,8 @@
-package me.borysplugin.rPGUtils
+package me.borysplugin.rPGUtils.commands
 
+import me.borysplugin.rPGUtils.RPGUtils
+import me.borysplugin.rPGUtils.gui.ItemsGUIs.ItemsGUI
+import me.borysplugin.rPGUtils.managers.ItemsManager
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -7,7 +10,10 @@ import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 
-class ItemsCommands(private val plugin: RPGUtils, private val itemsManager: ItemsManager) : CommandExecutor, TabCompleter {
+class ItemsCommands(
+    private val plugin: RPGUtils,
+    private val itemsManager: ItemsManager
+) : CommandExecutor, TabCompleter {
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (!sender.isOp) {
@@ -40,6 +46,18 @@ class ItemsCommands(private val plugin: RPGUtils, private val itemsManager: Item
                 sender.sendMessage("Gave $amount of $itemName from $category to $playerName.")
             }
 
+            "gui" -> {
+                val player = sender as? Player ?: run {
+                    sender.sendMessage("Only players can execute this command.")
+                    return false
+                }
+
+                val itemsGUI = ItemsGUI(plugin,itemsManager)
+
+                itemsGUI.setupItems()
+                itemsGUI.open(sender)
+            }
+
             else -> sender.sendMessage("Invalid subcommand. Use /items reload or /items give.")
         }
         return true
@@ -52,7 +70,7 @@ class ItemsCommands(private val plugin: RPGUtils, private val itemsManager: Item
         args: Array<out String>
     ): List<String> {
         return when (args.size) {
-            1 -> listOf("reload", "give").filter { it.startsWith(args[0], true) }
+            1 -> listOf("reload", "give", "gui").filter { it.startsWith(args[0], true) }
             2 -> if (args[0] == "give") itemsManager.itemsMap.keys.filter { it.startsWith(args[1], true) } else emptyList()
             3 -> itemsManager.itemsMap[args[1]]?.keys?.filter { it.startsWith(args[2], true) } ?: emptyList()
             4 -> listOf("1", "5", "10", "64").filter { it.startsWith(args[3], true) }
